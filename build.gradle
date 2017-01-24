@@ -1,0 +1,43 @@
+apply plugin: 'java'
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+version = '1.0'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  testCompile "junit:junit:4.12"
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Matrix Test Application',
+                   'Implementation-Version': version,
+                   'Main-Class': 'matrix.App'
+    }
+}
+
+task removeBinDirectory(type: Delete) {
+  delete 'bin'
+}
+
+task copyJarToBin(type: Copy) {
+  outputs.upToDateWhen { false }
+  from 'build/libs/' + tasks.jar.archiveName
+  into 'bin'
+  rename { name -> 'matrix.jar' }
+}
+
+task copyTestDataToBin(type: Copy) {
+  outputs.upToDateWhen { false }
+  from 'src/test/resources/test.prn'
+  into 'bin'
+}
+
+tasks.build.dependsOn copyJarToBin
+tasks.build.dependsOn copyTestDataToBin
+tasks.clean.dependsOn removeBinDirectory
